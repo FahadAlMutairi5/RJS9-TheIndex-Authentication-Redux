@@ -3,8 +3,11 @@ import { NavLink, Link } from "react-router-dom";
 
 // Logo
 import logo from "./assets/theindex.svg";
+import { connect } from "react-redux";
 
+import * as actionCreators from "./store/actions/index";
 class Sidebar extends Component {
+
   render() {
     return (
       <div id="sidebar">
@@ -14,17 +17,36 @@ class Sidebar extends Component {
             <NavLink to="/authors">AUTHORS</NavLink>
           </h4>
         </section>
-        <div className="fixed-bottom">
-          <Link to="/login" className="btn btn-info m-2 float-left">
+          {
+            this.props.user ?
+            <div className="fixed-bottom"> 
+            <button onClick={this.props.logout} className="btn btn-success m-2 float-left">
+            Logout {this.props.user.username}
+            </button>  
+            </div>
+             :
+            <div className="fixed-bottom">  
+            <Link to="/login" className="btn btn-info m-2 float-left">
             Login
-          </Link>
-          <Link to="/signup" className="btn btn-success m-2 float-left">
-            Signup
-          </Link>
-        </div>
+            </Link>
+            <Link to="/signup" className="btn btn-success m-2 float-left">
+              Signup
+            </Link> 
+            </div>  
+        }
       </div>
     );
   }
 }
+const mapStateToProps = state => {
+  return {
+    user: state.rootAuth.user,
+  };
+};
 
-export default Sidebar;
+const mapDispatchToProps = dispatch => {
+  return {
+    logout: () => dispatch(actionCreators.logout()),
+  };
+};
+export default connect(mapStateToProps,mapDispatchToProps)(Sidebar);

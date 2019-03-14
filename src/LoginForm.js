@@ -1,6 +1,8 @@
 import React, { Component } from "react";
 import { Link } from "react-router-dom";
+import { connect } from "react-redux";
 
+import * as actionCreators from "./store/actions/index";
 class Login extends Component {
   constructor(props) {
     super(props);
@@ -20,7 +22,7 @@ class Login extends Component {
 
   handleSubmit(event) {
     event.preventDefault();
-    alert("I DON'T WORK YET");
+    this.props.login(this.state, this.props.history)
   }
 
   render() {
@@ -69,5 +71,9 @@ class Login extends Component {
     );
   }
 }
-
-export default Login;
+const mapDispatchToProps = dispatch => {
+  return {
+    login: (userDate, history) => dispatch(actionCreators.login(userDate,history))
+  };
+};
+export default connect(null,mapDispatchToProps)(Login);

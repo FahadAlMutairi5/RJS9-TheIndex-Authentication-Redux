@@ -3,6 +3,7 @@ import { connect } from "react-redux";
 
 // Actions
 import * as actionCreators from "./store/actions";
+import { Redirect } from "react-router-dom";
 
 class AuthorForm extends Component {
   constructor(props) {
@@ -27,6 +28,10 @@ class AuthorForm extends Component {
   }
 
   render() {
+    if (!this.props.user) {
+      
+      return <Redirect to="/login"/>;
+    }
     return (
       <form onSubmit={this.submitAuthor}>
         <div className="input-group mb-3">
@@ -69,7 +74,11 @@ class AuthorForm extends Component {
     );
   }
 }
-
+const mapStateToProps = state => {
+  return {
+    user: state.rootAuth.user,
+  };
+};
 const mapDispatchToProps = dispatch => {
   return {
     postAuthor: newAuthor => dispatch(actionCreators.postAuthor(newAuthor))
@@ -77,6 +86,6 @@ const mapDispatchToProps = dispatch => {
 };
 
 export default connect(
-  null,
+  mapStateToProps,
   mapDispatchToProps
 )(AuthorForm);

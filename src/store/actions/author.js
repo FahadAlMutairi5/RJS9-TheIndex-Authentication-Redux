@@ -26,10 +26,10 @@ export const fetchAuthorDetail = authorID => {
   };
 };
 
-export const postBook = (book, authorID) => {
+export const postBook = (book, author) => {
   book = {
     ...book,
-    authors: [authorID]
+    authors: author
   };
   return dispatch => {
     instance

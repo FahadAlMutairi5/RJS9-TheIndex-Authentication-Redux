@@ -3,13 +3,15 @@ import { connect } from "react-redux";
 
 // Actions
 import * as actionCreators from "./store/actions";
+import { Redirect } from "react-router-dom";
 
 class BookForm extends Component {
   constructor(props) {
     super(props);
     this.state = {
       title: "",
-      color: ""
+      color: "",
+      authors:[]
     };
     this.onTextChange = this.onTextChange.bind(this);
     this.onSubmit = this.onSubmit.bind(this);
@@ -21,10 +23,16 @@ class BookForm extends Component {
 
   onSubmit(event) {
     event.preventDefault();
-    this.props.postBook(this.state, this.props.authorID);
+    this.props.postBook(this.state, this.state.authors);
   }
-
+  addAuthor = event => {
+  this.setState({authors: [...event.target.selectedOptions].map(o => o.value)})
+  }
   render() {
+    if (!this.props.user) {
+      
+      return <Redirect to="/login"/>;
+    }
     return (
       <form onSubmit={this.onSubmit}>
         <input
@@ -43,7 +51,14 @@ class BookForm extends Component {
           <option value="white">White</option>
           <option value="grey">Grey</option>
           <option value="purple">Purple</option>
-        </select>
+        </select><br/>
+        <div className="form-group">
+          <label htmlFor="exampleFormControlSelect2">select authors</label>
+          <select multiple className="form-control" id="exampleFormControlSelect2" onChange={this.addAuthor}>
+            {this.props.authors.map(author => <option key={author.id} value={author.id}> {author.first_name} {author.last_name}</option>)}
+            
+          </select>
+        </div>
         <input type="submit" value="Add Book" />
       </form>
     );
@@ -53,17 +68,17 @@ class BookForm extends Component {
 const mapStateToProps = state => {
   return {
     authors: state.rootAuthors.authors,
-    author: state.rootAuthor.author
+    author: state.rootAuthor.author,
+    user: state.rootAuth.user,
   };
 };
 
 const mapDispatchToProps = dispatch => {
   return {
-    postBook: (book, authorID) =>
-      dispatch(actionCreators.postBook(book, authorID))
+    postBook: (book, author) =>
+      dispatch(actionCreators.postBook(book, author))
   };
 };
-
 export default connect(
   mapStateToProps,
   mapDispatchToProps
